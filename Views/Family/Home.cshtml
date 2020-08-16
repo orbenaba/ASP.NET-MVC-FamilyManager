@@ -1,0 +1,172 @@
+﻿@model FamilyManagerWeb.ViewModels.FamilyViewModel
+@using FamilyManagerWeb.Models;
+
+@{
+    ViewBag.Title = "Home Family";
+}
+<body class="home">
+    <nav class="nav">
+        <div class="container">
+            <div class="logo">
+                <a href="#">Welcome @Model.family.LastName</a>
+            </div>
+            <div id="mainListDiv" class="main_list">
+                <ul class="navlinks">
+                    <li><button id="newparent" type="button">New Parent</button></li>
+                    <li><button id="newchild" type="button">New Child</button></li>
+                </ul>
+            </div>
+            <span class="navTrigger">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+        </div>
+    </nav>
+    <div style="position:absolute;left:600px;top:150px" id="displayParentDiv"></div>
+    <div style="position:absolute;left:600px;top:150px" id="displayChildDiv"></div>
+
+
+    @* Toggle bar section *@
+
+    <a href="#menu" id="toggle" style="position:absolute;left:95px;top:160px"><span></span></a>
+    <div id="menu" style="position:absolute;left:0px;top:220px">
+        <ul>
+            <li>
+                <a href="#logoff" id="logoff">Log Off</a>
+            </li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </div>
+    @* Toggle bar section *@
+
+</body>
+<section class="home">
+</section>
+
+
+@section scripts
+{
+    <script>
+    $("#simplenavbar").remove();
+        $("#tohide").remove();
+
+    $('.navTrigger').click(function () {
+        $(this).toggleClass('active');
+        console.log("Clicked menu");
+        $("#mainListDiv").toggleClass("show_list");
+        $("#mainListDiv").fadeIn();
+    });
+    $(window).scroll(function () {
+        if ($(document).scrollTop() > 50) {
+            $('.nav').addClass('affix');
+            console.log("OK");
+        } else {
+            $('.nav').removeClass('affix');
+        }
+    });
+
+
+    window.onload = function () {
+        if (@Model.family.counter<@MagicNumbers.LimitPepole1Family) {
+            //Handling all the possible errors the both partial forms might throw
+            if (@Model.state== 1) {
+                if ($("#displayChildDiv").is(':visible')) {
+                    $("#displayChildDiv").load('@Url.Action("DisplayNewChildForm", "Family", new { username = Model.family.fUsername, flag = "t" })');
+                }
+            }
+            else if (@Model.state== 2)
+                if ($("#displayParentDiv").is(':visible')) {
+                    $("#displayParentDiv").load('@Url.Action("DisplayNewParentForm", "Family", new { username = Model.family.fUsername, flag = "t" })');
+                }
+            //Handling all the possible errors the both partial forms might throw
+            document.getElementById("newparent").onclick = function () { exeDisplayParent() };
+            function exeDisplayParent() {
+                if ($("#displayParentDiv").is(':visible')) {
+                    $("#displayParentDiv").hide();
+                }
+                else {
+                    $("#displayParentDiv").show();
+                    $("#displayParentDiv").load('@Url.Action("DisplayNewParentForm", "Family", new { username = Model.family.fUsername, flag = "f" })');
+                    $("#displayChildDiv").hide();
+                }
+            }
+            document.getElementById("newchild").onclick = function () { exeDisplayChild() };
+            function exeDisplayChild() {
+                if ($("#displayChildDiv").is(':visible')) {
+                    $("#displayChildDiv").hide();
+                }
+                else {
+                    $("#displayChildDiv").show();
+                    $("#displayChildDiv").load('@Url.Action("DisplayNewChildForm", "Family", new { username = Model.family.fUsername, flag = "f" })');
+                    $("#displayParentDiv").hide();
+                }
+            }
+        }
+        else {
+            document.getElementById("newparent").onclick = function () { displayApproMes() };
+            function displayApproMes() {
+                $("#newparent").hide();
+                $("#newchild").hide();
+                document.getElementById("newparent").insertAdjacentHTML("afterend",
+                    "<div style='color:red;font-size:20px'>Cant add new pepole</div>");
+            }
+        }
+
+
+        //Toggle section
+        var theToggle = document.getElementById('toggle');
+        function hasClass(elem, className) {
+            return new RegExp(' ' + className + ' ').test(' ' + elem.className + ' ');
+        }
+        // addClass
+        function addClass(elem, className) {
+            if (!hasClass(elem, className)) {
+                elem.className += ' ' + className;
+            }
+        }
+        // removeClass
+        function removeClass(elem, className) {
+            var newClass = ' ' + elem.className.replace(/[\t\r\n]/g, ' ') + ' ';
+            if (hasClass(elem, className)) {
+                while (newClass.indexOf(' ' + className + ' ') >= 0) {
+                    newClass = newClass.replace(' ' + className + ' ', ' ');
+                }
+                elem.className = newClass.replace(/^\s+|\s+$/g, '');
+            }
+        }
+        // toggleClass
+        function toggleClass(elem, className) {
+            var newClass = ' ' + elem.className.replace(/[\t\r\n]/g, " ") + ' ';
+            if (hasClass(elem, className)) {
+                while (newClass.indexOf(" " + className + " ") >= 0) {
+                    newClass = newClass.replace(" " + className + " ", " ");
+                }
+                elem.className = newClass.replace(/^\s+|\s+$/g, '');
+            } else {
+                elem.className += ' ' + className;
+            }
+        }
+
+        theToggle.onclick = function () {
+            toggleClass(this, 'on');
+            return false;
+        }
+
+        $("#logoff").on("click", function (e) {
+            e.preventDefault();//prevent the browser from going to the default URL
+            var lnk = $(this);
+            return bootbox.confirm('Are you sure?', function (result) {
+                e.preventDefault();
+                if (result) {
+                    $.post('@Url.Action("LogOff","Account")');
+                    return true;
+                }
+            });
+        });
+    };
+
+
+    </script>
+}

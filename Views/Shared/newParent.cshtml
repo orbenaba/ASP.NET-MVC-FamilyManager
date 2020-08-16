@@ -1,0 +1,38 @@
+﻿@model FamilyManagerWeb.ViewModels.ParentViewModel
+<div id="titles"><h1>New Parent</h1></div>
+<h6><br /></h6>
+
+
+@using (Html.BeginForm("newParentToFamily", "Family"))
+{
+    @Html.ValidationSummary(true, "Please fix the following mistakes.")
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.parent.FirstName)</h4></div>
+            @Html.TextBoxFor(m => m.parent.FirstName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.parent.FirstName)
+        </div>
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.parent.BirthDate)</h4></div>
+        @Html.TextBoxFor(m => m.parent.BirthDate, "{0:dd MMM yyyy}", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.parent.BirthDate)
+    </div>
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.parent.gender)</h4></div>
+        @Html.DropDownListFor(m => m.parent.gender, new SelectList(Model.genders, "id", "gender"), "Select gender", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.parent.gender)
+    </div>
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.parent.Salary)</h4></div>
+        @Html.TextBoxFor(m => m.parent.Salary, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.parent.Salary)
+    </div>
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.parent.TotalKids)</h4></div>
+        @Html.TextBoxFor(m => m.parent.TotalKids, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.parent.Salary)
+    </div>
+    <h4><button id="btnHere" type="submit" class="submitForms">Submit</button></h4>
+    @Html.HiddenFor(m => m.parent.id)
+    @Html.HiddenFor(m => m.parent.fUsername)
+    @ViewBag.Error
+}

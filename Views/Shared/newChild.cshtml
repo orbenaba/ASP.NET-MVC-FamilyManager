@@ -1,0 +1,68 @@
+﻿@model FamilyManagerWeb.ViewModels.ChildViewModel
+<div id="titles"><h1>New Children</h1></div>
+<h6><br /></h6>
+
+
+@using (Html.BeginForm("newChildToFamily", "Family"))
+{ 
+    @Html.ValidationSummary(true, "Please fix the following mistakes.")
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.child.FirstName)</h4></div>
+        @Html.TextBoxFor(m => m.child.FirstName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.child.FirstName)
+    </div>
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.child.BirthDate)</h4></div>
+        @Html.TextBoxFor(m => m.child.BirthDate, "{0:dd MMM yyyy}", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.child.BirthDate)
+    </div>
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.child.gender)</h4></div>
+        @Html.DropDownListFor(m => m.child.gender, new SelectList(Model.genders, "id", "gender"), "Select gender", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.child.gender)
+    </div>
+    <div class="form-group" style="color:white;font-size:15px">
+        <div id="titles"><h4>@Html.LabelFor(m => m.child.Status)</h4></div>
+        @Html.TextBoxFor(m => m.child.Status, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.child.Status)
+    </div>
+    <div class="checkbox" style="color:white">
+        <label id="titles   ">
+            @Html.CheckBoxFor(m => m.child.IsSingle, new { @class = "form-control" })Are you single?
+            @Html.ValidationMessageFor(m => m.child.IsSingle)
+        </label>
+    </div>
+    <h4><button id="btnHere" type="submit" class="submitForms">Submit</button></h4>
+    @Html.HiddenFor(m => m.child.id)
+    @Html.HiddenFor(m => m.child.fUsername)
+}
+@section scripts
+{
+<script>
+
+    $(document).ready(function () {
+        ////enforcing the user to select valid customer which found on the database
+        //$.validator.addMethod("validCustomer", function () {
+        //    return vm.customerId && vm.customerId !== 0;
+        //}, "Please select a valid customer.");
+        var validator = $("#child").validate({
+            submitHandler: function () {
+                    
+                $.ajax({
+                    url: "/Family/newChildToFamily",
+                    method: "post",
+                    data: vm
+                })
+                    .done(function () {
+                        toastr.success("Human has successfully added to " +@Model.child.fUsername+" family.");
+                    })
+                    .fail(function () {
+                        toastr.error("Something unexpected happened.");
+                    });
+                return false;
+            }
+        });
+    });
+
+</script>
+}

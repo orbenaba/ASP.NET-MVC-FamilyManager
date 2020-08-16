@@ -1,0 +1,21 @@
+﻿@model FamilyManagerWeb.Models.Family
+@{
+    ViewBag.Title = "Index";
+}
+<h3 style="color:white">Please fill the above fields...</h3>
+@using (Html.BeginForm("Create", "Family"))
+{
+    <div class="form-group" style="color:white;font-size:10px">
+        @Html.LabelFor(m => m.LastName)
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.LastName)
+    </div>
+    <button type="submit" class="btn btn-primary" style="color:white;position:absolute;top:225px;left:50px">Submit</button>
+    @Html.HiddenFor(m => m.fUsername)
+}
+@section Scripts
+{
+    <script>
+        $("#hidetitle").remove();
+    </script>
+}
